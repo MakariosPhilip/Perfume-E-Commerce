@@ -1,14 +1,29 @@
 # Storefront
 
-Team-ready scaffold for a product catalog and shopping cart. The product is **not fully implemented**. This repository gives each developer an isolated feature boundary so user stories can be built in parallel with few shared-file merge conflicts.
+A modern e-commerce storefront for perfume products built with Next.js, TypeScript, and React. The project focuses on a clean product discovery flow, cart management, and a maintainable feature-based architecture designed for team collaboration.
 
-> Features should own their implementation. Shared code should remain minimal and genuinely reusable.
+This repository is structured as a scalable storefront scaffold where each feature owns its own implementation, making it easier to build and iterate on user stories without causing frequent merge conflicts.
 
-## Technology stack
+## Overview
 
-- Next.js (App Router)
+Storefront is a product catalog and shopping cart application that allows users to:
+
+- browse a product listing
+- search for products
+- filter by category or attributes
+- sort products by relevant criteria
+- view product details and image gallery
+- select product options
+- add items to the shopping cart
+- update quantities and review totals
+
+The app is intentionally organized around feature boundaries so the catalog and cart logic remain isolated and reusable.
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
 - TypeScript
-- React
 - Tailwind CSS
 - TanStack Query
 - Zustand
@@ -18,36 +33,165 @@ Team-ready scaffold for a product catalog and shopping cart. The product is **no
 - Prettier
 - pnpm
 
-No extra libraries were added beyond this stack. Class-name joining is a tiny local helper (`src/lib/utils/cn.ts`) instead of another dependency.
+The project keeps dependencies minimal and avoids heavy abstraction layers, with small local utilities such as the className helper in `src/lib/utils/cn.ts` instead of introducing another package.
+
+## Project Goals
+
+- Build a fast storefront experience for browsing perfume products
+- Keep architecture modular and team-friendly
+- Separate business logic from route-level code
+- Maintain feature ownership for product and cart responsibilities
+- Support future backend integration without changing the overall app structure
+
+## Features
+
+### Product discovery
+
+- product grid display
+- search functionality
+- product filters
+- sort options
+- pagination support
+- product detail page
+- related products area
+
+### Shopping cart
+
+- add product to cart
+- update quantity
+- remove products from cart
+- display subtotal and totals
+- cart indicator navigation
+
+### Architecture principles
+
+- routes stay thin and delegate to feature modules
+- feature-specific logic lives under `src/features/<name>/`
+- cross-feature communication happens only through public exports or route composition
+- state is local to the feature boundary
+- shared code is reserved for genuinely reusable UI and infrastructure pieces
+
+## Project Structure
+
+```text
+src/
+├── app/
+│   ├── cart/
+│   ├── products/
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── providers.tsx
+├── components/
+│   ├── shared/
+│   └── ui/
+├── config/
+├── features/
+│   ├── cart/
+│   └── products/
+├── lib/
+│   ├── api/
+│   └── utils/
+└── ...
+```
+
+## Feature Boundaries
+
+### Products feature
+
+Responsible for product browsing and detail flows:
+
+- listing, search, filters, and sort
+- product card and grid UI
+- product detail components
+- services and mock product data
+- dedicated hooks and types
+
+Primary folder:
+
+- `src/features/products/`
+
+### Cart feature
+
+Responsible for cart behavior and related UI:
+
+- add-to-cart actions
+- cart page UI
+- quantity updates and removals
+- store logic using Zustand
+- cart totals and utility functions
+
+Primary folder:
+
+- `src/features/cart/`
+
+## Routes
+
+- `/` → redirects to `/products`
+- `/products` → product listing page
+- `/products/[productId]` → product details page
+- `/cart` → shopping cart page
 
 ## Prerequisites
 
+Before running the project, make sure you have:
+
 - Node.js 20 or later
-- pnpm 10 or later (`corepack enable` is recommended)
+- pnpm 10 or later
+
+It is recommended to enable Corepack:
+
+```bash
+corepack enable
+```
 
 ## Installation
 
 ```bash
 pnpm install
+```
+
+If you use environment variables, copy the example file if available:
+
+```bash
 cp .env.example .env.local
 ```
 
-## Development
+## Environment Variables
+
+The app supports a mock-first setup and can later switch to a real API.
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Base URL for a future catalog API. Can remain empty while mock data is enabled. |
+| `NEXT_PUBLIC_USE_MOCK_API` | Set to `true` to use the in-repo mock product data. Set to `false` only when a real API is available. |
+
+> There is no backend service included in this repository. The mock data is kept in the feature service layer and is intentionally separated from the API client abstraction.
+
+## Running the Project
+
+### Development
 
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The home route redirects to `/products`.
+Then open:
 
-## Build
+- http://localhost:3000
+
+The home route automatically redirects to `/products`.
+
+## Production Build
 
 ```bash
 pnpm build
 pnpm start
 ```
 
-## Tests
+## Quality Checks
+
+Run the project checks before opening a PR:
 
 ```bash
 pnpm typecheck
@@ -55,69 +199,51 @@ pnpm lint
 pnpm test
 ```
 
-End-to-end tests need the app running:
+## End-to-End Testing
+
+The project includes Cypress tests for route-level flows.
+
+Start the dev server first:
 
 ```bash
 pnpm dev
+```
+
+Then run:
+
+```bash
 pnpm test:e2e
-# or
+```
+
+Or open the Cypress UI:
+
+```bash
 pnpm cypress:open
 ```
 
-## Environment setup
+## Testing Strategy
 
-Copy `.env.example` to `.env.local`. Never commit secrets.
+- unit tests for utility logic and feature helpers
+- Jest for frontend logic testing
+- Cypress for end-to-end user journeys
+- feature-local test files kept close to the code they validate
 
-| Variable | Purpose |
-| --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | Base URL for a future catalog HTTP API. Leave empty while mocks are enabled. |
-| `NEXT_PUBLIC_USE_MOCK_API` | `true` (default) uses in-repo mock product data. Set `false` only when a real API exists. |
+## Development Guidelines
 
-There is **no backend** in this repository. Mock data lives in `src/features/products/services/` and is separate from the HTTP service stub.
+1. Work inside the relevant feature directory.
+2. Keep route files thin and focused on composition.
+3. Add tests beside the feature logic when needed.
+4. Avoid large shared files unless the code is truly cross-feature.
+5. Import other features through their public `index.ts` exports when needed.
+6. Keep the UI primitives in `src/components/ui` limited to reusable, low-level items.
+7. Run validation checks before creating a pull request.
 
-## Project architecture
+## Notes
 
-```text
-app            thin routes — map URLs to features
-  ↓
-features       product capabilities own UI, hooks, services, types, state
-  ↓
-shared UI / lib / config
-```
+The repository is designed as a team-ready storefront scaffold and is intended to support parallel feature development. It is not a full production backend solution by itself, but it provides a clean foundation for building a complete retail catalog and cart experience.
 
-- **Routes stay thin.** Business logic belongs in `src/features/<name>/`.
-- **Features do not import another feature's internals.** If two features must meet, compose them in the route or use that feature's public `index.ts`.
-- **State stays local.** TanStack Query is used for product server/cache reads. Zustand is used only for the cart.
-- **No giant shared files.** Do not add a global `utils.ts`, `store.ts`, `api.ts`, or `types/index.ts`.
+For feature ownership details and user-story mapping, see [docs/FEATURE_OWNERSHIP.md](docs/FEATURE_OWNERSHIP.md).
 
-## Feature structure
+## License
 
-```text
-src/features/products/     catalog listing, search, filters, sort, details
-src/features/cart/         cart page, line items, totals, add-to-cart
-```
-
-Each feature follows the same shape:
-
-```text
-components/   UI for this feature only
-hooks/        feature hooks
-services/     feature API boundaries (products)
-store/        feature client state (cart)
-types/        feature types
-utils/        feature helpers
-index.ts      public API other layers may import
-```
-
-See [docs/FEATURE_OWNERSHIP.md](docs/FEATURE_OWNERSHIP.md) for user-story mapping.
-
-## Development guidelines
-
-1. Pick a user story and open its feature directory.
-2. Implement components, hooks, services, and types **inside that feature**.
-3. Add colocated tests (`*.test.ts` / `*.test.tsx`) next to the code.
-4. Touch `src/app` only when a route needs new wiring.
-5. Import another feature only through its `index.ts`, and only when composition in the route is not enough.
-6. Keep `src/components/ui` limited to primitives used by more than one feature.
-7. Do not move feature code into shared folders "just in case".
-8. Run `pnpm typecheck`, `pnpm lint`, and `pnpm test` before opening a PR.
+This project is currently intended for internal learning and project development use unless a license is explicitly added later.
