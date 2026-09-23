@@ -1,6 +1,6 @@
 # Storefront
 
-A modern e-commerce storefront for perfume products built with Next.js, TypeScript, and React. The project focuses on a clean product discovery flow, cart management, and a maintainable feature-based architecture designed for team collaboration.
+A modern e-commerce storefront for perfume products as part of the Digitera Camp initiative built with Next.js, TypeScript, and React. The project focuses on a clean product discovery flow, cart management, and a maintainable feature-based architecture designed for team collaboration.
 
 This repository is structured as a scalable storefront scaffold where each feature owns its own implementation, making it easier to build and iterate on user stories without causing frequent merge conflicts.
 
